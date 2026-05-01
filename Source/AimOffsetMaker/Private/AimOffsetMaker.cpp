@@ -23,6 +23,15 @@ void FAimOffsetMakerModule::StartupModule()
 
 void FAimOffsetMakerModule::ShutdownModule()
 {
+	for (int32 windowIndex = OpenDialogWindows.Num() - 1; windowIndex >= 0; --windowIndex)
+	{
+		if (const TSharedPtr<SWindow> window = OpenDialogWindows[windowIndex].Pin())
+		{
+			window->RequestDestroyWindow();
+		}
+	}
+	OpenDialogWindows.Reset();
+
 	if (IToolMenusModule::IsAvailable())
 	{
 		UToolMenus::UnRegisterStartupCallback(this);
@@ -121,7 +130,17 @@ void FAimOffsetMakerModule::OpenAimOffsetDialog() const
 		.InitialSequence(PendingDialogSequence.Get())
 		.ParentWindow(dialogWindow));
 
+	dialogWindow->GetOnWindowClosedEvent().AddRaw(this, &FAimOffsetMakerModule::OnAimOffsetDialogClosed);
+	OpenDialogWindows.Add(dialogWindow);
 	FSlateApplication::Get().AddWindow(dialogWindow);
+}
+
+void FAimOffsetMakerModule::OnAimOffsetDialogClosed(const TSharedRef<SWindow>& InWindow) const
+{
+	OpenDialogWindows.RemoveAll([&InWindow](const TWeakPtr<SWindow>& InTrackedWindow)
+	{
+		return !InTrackedWindow.IsValid() || InTrackedWindow.Pin() == InWindow;
+	});
 }
 
 UAnimSequence* FAimOffsetMakerModule::GetCurrentAnimSequenceFromContext(const FToolMenuContext& InContext) const
