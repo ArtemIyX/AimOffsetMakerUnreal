@@ -102,6 +102,58 @@ All the necessary assets and aim offsets will appear.
 
 <img width="2015" height="1194" alt="Generated Anim Offset" src="https://github.com/user-attachments/assets/1c699ca0-3f8e-4045-b9e4-c7cfe3884660" />
 
+## Meta Data Curve Action
+
+<img width="426" height="194" alt="MetaData Curve" src="https://github.com/user-attachments/assets/9fcc74d1-38de-4d0e-898c-0bb56e050b4c" />
+
+### Open from Content Browser
+
+Right click one or more `UAnimSequence` assets in the Content Browser:
+
+`Asset Actions -> Apply Meta Data Curve`
+
+The action uses a curve icon in the context menu.
+
+### Apply Meta Data Curve dialog
+
+<img width="354" height="174" alt="Enter meta name" src="https://github.com/user-attachments/assets/1605e274-775d-4729-9c29-540bd755a3db" />
+
+A small dialog will appear with:
+
+- `Enter name`
+- `Apply`
+- `Cancel`
+
+If cancelled, nothing is changed.
+
+### What it does
+
+For every selected animation sequence, the plugin:
+
+- finds or creates a float metadata curve with the entered name
+- forces the curve to be marked as `Metadata`
+- sets the curve value to `1.0`
+- marks the asset dirty if changed
+
+If the curve already exists and is not `1.0`, it is updated.
+
+### Progress and notifications
+
+When applying metadata curves:
+
+- a progress notification appears in the bottom-right corner
+- a finish notification appears when the operation ends
+
+The finish notification shows:
+
+- curve name
+- how many sequences were added
+- how many sequences were updated
+- how many sequences failed
+
+### Multi-selection support
+
+The metadata curve action supports applying the same curve to multiple selected `UAnimSequence` assets in one operation.
 
 ## Features
 
@@ -202,6 +254,11 @@ Samples are auto-filled from the generated direction poses.
 - progress notification during creation
 - success/failure notification after completion
 - created assets are synced in Content Browser
+- Content Browser asset action for animation metadata curves
+- curve icon in context menu for metadata curve action
+- progress notification during metadata curve apply
+- success/failure notification after metadata curve apply
+- supports multi-select animation sequence processing
 
 ## How It Works
 
@@ -221,6 +278,19 @@ The plugin then:
 - applies compression if enabled
 - creates an Aim Offset asset if enabled
 - configures and fills the Aim Offset samples if enabled
+
+### Metadata curve workflow
+
+1. Select one or more animation sequences in the Content Browser.
+2. Open `Asset Actions -> Apply Meta Data Curve`.
+3. Enter the metadata curve name.
+4. Click `Apply`.
+
+The plugin then:
+- creates the metadata curve if missing
+- updates it if it already exists
+- sets its value to `1.0`
+- shows progress and completion notifications
 
 ## Installation
 
@@ -265,6 +335,9 @@ You can also place it in:
 - output folder must already exist in the project
 - frame indices must be unique
 - additive external animation is required only when `Use Animation` is enabled
+- metadata curve apply works only on `UAnimSequence` assets
+- multiple animation sequences can be processed at once
+- entered metadata curve name must not be empty
 
 ## Validation
 
@@ -280,6 +353,12 @@ Before creation, the plugin validates:
 - every direction frame exists
 - every direction frame is unique
 - every direction frame is inside the source sequence frame range
+
+For metadata curve apply, the plugin validates:
+
+- at least one animation sequence is selected
+- all selected assets are `UAnimSequence`
+- curve name is not empty
 
 ## Limitations
 
