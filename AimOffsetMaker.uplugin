@@ -18,6 +18,11 @@
 			"Name": "AimOffsetMaker",
 			"Type": "Editor",
 			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "MetaCurveAction",
+			"Type": "Editor",
+			"LoadingPhase": "PreDefault"
 		}
 	]
 }
